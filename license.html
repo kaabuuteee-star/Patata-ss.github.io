@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>License Check | Allen's Workshop</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <nav>
+        <a href="index.html" class="logo">Allen's Workshop</a>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="store.html">Store</a>
+            <a href="portfolio.html">Portfolio</a>
+            <a href="license.html" class="active">License Check</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h2 class="section-title">Verify License</h2>
+        <div class="card" style="max-width: 600px; margin: 0 auto; text-align: center;">
+            <div class="card-content">
+                <h3 style="margin-bottom: 20px;">Check User Database</h3>
+                <input type="number" id="userIdInput" placeholder="Enter Roblox User ID..." 
+                    style="width: 80%; padding: 15px; border-radius: 5px; border: 1px solid #333; background: #111; color: white; margin-bottom: 20px;">
+                <br>
+                <button class="btn" onclick="checkLicense()">Search Database</button>
+
+                <div id="resultBox" style="margin-top: 30px; padding: 20px; border-radius: 10px; display: none;">
+                    <h2 id="resultTitle"></h2>
+                    <p id="resultMessage"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer><p>&copy; 2025 Allen's Workshop.</p></footer>
+    <script src="script.js"></script>
+
+    <script>
+        async function checkLicense() {
+            const input = document.getElementById('userIdInput').value;
+            const resultBox = document.getElementById('resultBox');
+            const resultTitle = document.getElementById('resultTitle');
+            const resultMsg = document.getElementById('resultMessage');
+
+            if (!input) { alert("Please enter a User ID"); return; }
+            if(typeof playClick === "function") playClick();
+
+            resultBox.style.display = "block";
+            resultBox.style.background = "#222";
+            resultTitle.innerHTML = "Searching...";
+            resultTitle.style.color = "white";
+            resultMsg.innerHTML = "Connecting to database...";
+
+            try {
+                const response = await fetch('whitelist.json?t=' + new Date().getTime());
+                if (!response.ok) throw new Error("Database offline");
+                const whitelist = await response.json();
+                const userId = parseInt(input);
+
+                if (whitelist.includes(userId)) {
+                    resultBox.style.background = "rgba(0, 255, 0, 0.1)";
+                    resultBox.style.border = "1px solid #00ff00";
+                    resultTitle.innerHTML = "✅ VERIFIED";
+                    resultTitle.style.color = "#00ff00";
+                    resultMsg.innerHTML = "User ID <b>" + userId + "</b> owns a valid license.";
+                } else {
+                    resultBox.style.background = "rgba(255, 0, 0, 0.1)";
+                    resultBox.style.border = "1px solid #ff0000";
+                    resultTitle.innerHTML = "❌ NOT FOUND";
+                    resultTitle.style.color = "#ff0000";
+                    resultMsg.innerHTML = "User ID <b>" + userId + "</b> is not in the database.";
+                }
+            } catch (error) {
+                resultTitle.innerHTML = "⚠ ERROR";
+                resultTitle.style.color = "yellow";
+                resultMsg.innerHTML = "Could not connect to database.";
+            }
+        }
+    </script>
+</body>
+</html>
